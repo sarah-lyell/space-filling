@@ -3,21 +3,22 @@ import { HilbertRules } from "./hilbert_rules.mjs";
 import { MooreRules } from "./moore_rules.js";
 import { GosperRules } from "./gosper_rules.js";
 import { DragonRules } from "./dragon_rules.js";
+import { MortonRules } from "./morton_rule.js";
 import { TurtleGraphics } from "./turtle_graphics.js";
 
 class CurveDrawer {
     
-    constructor(order, cellSize) {
-      //this.curveType = curve;  
+    constructor(curve, order) {
+      this.curveType = curve;  
       this.order = order; 
-      this.cellSize = cellSize;
+      this.cellSize = 20;
 
       this.canvas = document.getElementById('canvas');
       this.context = this.canvas.getContext('2d');
         
       // Use pow(2, order) for Moore and Hilbert and pow(2, order) for gosper
       this.gridSize = Math.pow(2, order);
-      this.canvasSize = this.gridSize * cellSize;
+      this.canvasSize = this.gridSize * this.cellSize;
       this.halfCell = this.cellSize / 2;
     }
 
@@ -43,37 +44,30 @@ class CurveDrawer {
         }
       }
     
-      /*
+    
     drawCurve() {
       // cases for which function to call based on the name of the curve
       // or type of the curve. 
       const curveType = this.curveType.toLowerCase();
       switch(curveType) {
         case 'hilbert':
-        
+          this.drawHilbertCurve();
+          break;
+        case 'morton':
+          this.drawMortonCurve();
+          break;
         case 'moore':
-        
+          this.drawMooreCurve();
+          break;
+        case 'gosper':
+          this.drawGosperCurve();
+          break;
         case 'dragon':
+          this.drawDragonCurve();
+          break;
+
       }
     }
-
-    drawLBasedCurve() {
-      this.drawGrid();
-
-      this.context.strokeStyle = '#f00'; // Set the color of the curve
-      this.context.lineWidth = 3; // Set the line width
-        
-      
-      
-      const curveType = this.curveType.toLowerCase();
-      switch(curveType) {
-        case 'hilbert':
-        
-        case 'moore':
-        
-        case 'dragon':
-      }
-    } */
     
     drawHilbertCurve() {
         this.drawGrid();
@@ -101,6 +95,12 @@ class CurveDrawer {
             turtle.forward(1);
           }
         }
+    }
+
+    drawMortonCurve() {
+      this.drawGrid();
+      this.context.strokeStyle = '#f00'; // Set the color of the curve
+      this.context.lineWidth = 3; // Set the line width
     }
 
     drawMooreCurve() {
@@ -188,6 +188,6 @@ class CurveDrawer {
 
 }
 
-const curveDrawer = new CurveDrawer(5, 20);
-curveDrawer.drawMooreCurve.bind(curveDrawer)();
+const curveDrawer = new CurveDrawer('moore', 6);
+curveDrawer.drawCurve.bind(curveDrawer)();
 
