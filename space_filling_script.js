@@ -131,7 +131,7 @@ class CurveDrawer {
     }
 
     drawGosperCurve() {
-        this.drawGrid();
+        //this.drawGrid();
         this.context.strokeStyle = '#f00'; // Set the color of the curve
         this.context.lineWidth = 3; // Set the line width
 
@@ -141,7 +141,7 @@ class CurveDrawer {
 
         // Start the turtle facing up in upper left of grid (approximate)
         const startX = this.halfCell;
-        const startY = Math.ceil(.3 * this.canvasSize) - this.halfCell;
+        const startY = 800;
         const startAngle = 270;
 
         const turtle = new TurtleGraphics(startX, startY, startAngle, this.cellSize, this.context);
@@ -158,7 +158,7 @@ class CurveDrawer {
     }
 
     drawDragonCurve() {
-        this.drawGrid();
+        //this.drawGrid();
         this.context.strokeStyle = '#f00'; // Set the color of the curve
         this.context.lineWidth = 3; // Set the line width
 
@@ -168,8 +168,8 @@ class CurveDrawer {
         const dragonInstructions = dragon.generateLString();
 
         // Start the turtle facing up towards the center (approximate)
-        const startX = this.halfCell + (.25 * this.gridSize * this.cellSize);
-        const startY = (.25 * this.gridSize * this.cellSize) + this.halfCell;
+        const startX = 800; //this.halfCell + (.25 * this.gridSize * this.cellSize);
+        const startY = 800; //(.25 * this.gridSize * this.cellSize) + this.halfCell;
         const startAngle = 270;
 
         const turtle = new TurtleGraphics(startX, startY, startAngle, this.cellSize, this.context);
@@ -188,6 +188,6 @@ class CurveDrawer {
 
 }
 
-const curveDrawer = new CurveDrawer('moore', 6);
+const curveDrawer = new CurveDrawer('gosper', 3);
 curveDrawer.drawCurve.bind(curveDrawer)();
 
