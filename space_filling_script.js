@@ -6,7 +6,22 @@ import { DragonRules } from "./dragon_rules.js";
 import { MortonOrder } from "./morton_rule.js";
 import { TurtleGraphics } from "./turtle_graphics.js";
 
-class CurveDrawer {
+document.addEventListener('DOMContentLoaded', function() {
+  const drawButton = document.getElementById('drawButton');
+  drawButton.addEventListener('click', drawCurve);
+});
+
+function drawCurve() {
+  const curveType = document.getElementById('curveType');
+  const curveSelected = curveType.value;
+  const inputOrder = document.getElementById('order');
+  const order = parseInt(inputOrder.value, 10);
+
+  const curveDrawer = new CurveDrawer(curveSelected, order);
+  curveDrawer.drawCurve.bind(curveDrawer)();
+}
+
+export class CurveDrawer {
     
     constructor(curve, order) {
       this.curveType = curve;  
@@ -46,6 +61,11 @@ class CurveDrawer {
     
     
     drawCurve() {
+      // First, clear the canvas
+      const canvas = document.getElementById('canvas');
+      const context = canvas.getContext('2d');
+      context.clearRect(0, 0, canvas.width, canvas.height);
+
       // cases for which function to call based on the name of the curve
       // or type of the curve. 
       const curveType = this.curveType.toLowerCase();
@@ -204,7 +224,4 @@ class CurveDrawer {
     }
 
 }
-
-const curveDrawer = new CurveDrawer('morton', 5);
-curveDrawer.drawCurve.bind(curveDrawer)();
 
