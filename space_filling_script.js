@@ -3,7 +3,7 @@ import { HilbertRules } from "./hilbert_rules.mjs";
 import { MooreRules } from "./moore_rules.js";
 import { GosperRules } from "./gosper_rules.js";
 import { DragonRules } from "./dragon_rules.js";
-import { MortonRules } from "./morton_rule.js";
+import { MortonOrder } from "./morton_rule.js";
 import { TurtleGraphics } from "./turtle_graphics.js";
 
 class CurveDrawer {
@@ -11,12 +11,12 @@ class CurveDrawer {
     constructor(curve, order) {
       this.curveType = curve;  
       this.order = order; 
-      this.cellSize = 20;
+      this.cellSize = 30;
 
       this.canvas = document.getElementById('canvas');
       this.context = this.canvas.getContext('2d');
         
-      // Use pow(2, order) for Moore and Hilbert and pow(2, order) for gosper
+      // Think is same for
       this.gridSize = Math.pow(2, order);
       this.canvasSize = this.gridSize * this.cellSize;
       this.halfCell = this.cellSize / 2;
@@ -98,15 +98,32 @@ class CurveDrawer {
     }
 
     drawMortonCurve() {
+      const morton = new MortonOrder(this.order);
+      const coordinates = morton.coordinateSequence;
+      
       this.drawGrid();
-      this.context.strokeStyle = '#f00'; // Set the color of the curve
-      this.context.lineWidth = 3; // Set the line width
+
+      const context = this.context;
+      context.strokeStyle = '#f00'; // Set the color of the curve
+      context.lineWidth = 2; // Set the line width
+      context.beginPath();
+      context.moveTo(this.halfCell, this.halfCell); // Start in upper left cell
+      
+      // Draw path through grid in specified order, through cell centers
+      for (const coordPair of coordinates) {
+        const x = (coordPair[0] * this.cellSize) + this.halfCell;
+        const y = (coordPair[1] * this.cellSize) + this.halfCell;
+        context.lineTo(x, y);
+        context.stroke();
+      }
+
     }
 
     drawMooreCurve() {
         this.drawGrid();
         this.context.strokeStyle = '#f00'; // Set the color of the curve
         this.context.lineWidth = 3; // Set the line width
+        
         const moore = new MooreRules(this.order);
         const mooreLString = moore.generateLString();
         const mooreInstructions = moore.generateStringForGraphics(mooreLString);
@@ -188,6 +205,6 @@ class CurveDrawer {
 
 }
 
-const curveDrawer = new CurveDrawer('gosper', 3);
+const curveDrawer = new CurveDrawer('morton', 5);
 curveDrawer.drawCurve.bind(curveDrawer)();
 
