@@ -40,7 +40,8 @@ export class CurveDrawer {
 
     drawGrid() {
         const { context, canvasSize, cellSize } = this;
-        context.strokeStyle = '#000'; // Set the color of the grid lines
+        context.strokeStyle = '#5c5c5c'; // Set the color of the grid lines
+        context.lineWidth = 2;
         
         // Draw vertical lines
         for (let x = 0; x <= canvasSize; x += cellSize) {
@@ -49,7 +50,7 @@ export class CurveDrawer {
           context.lineTo(x, canvasSize);
           context.stroke();
         }
-    
+        
         // Draw horizontal lines
         for (let y = 0; y <= canvasSize; y += cellSize) {
           context.beginPath();
