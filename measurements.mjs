@@ -4,6 +4,7 @@
  *
  */
 import { MortonOrder } from "./morton_rule.js";
+import { HilbertRules } from "./hilbert_rules.mjs";
 class Mesaurements {
 
     constructor(sideLength, order) {
@@ -145,9 +146,19 @@ class Mesaurements {
 
 }
 
-const measure = new Mesaurements(8, 3);
+//const measure = new Mesaurements(8, 3);
 //const coordinates = measure.generateCoordinates();
 //console.log(coordinates);
-const avg = measure.avgNearestNeighborStretch;
-console.log(avg);
+//const avg = measure.avgNearestNeighborStretch;
+//console.log(avg);
 
+const hilbert = new HilbertRules(3);
+const index = hilbert.convertIndexToCoordinate(12);
+console.log(index);
+const coord = hilbert.convertCoordToIndex([3,-1]);
+console.log(coord);
+const diff = hilbert.convertIndexToCoordinate(15);
+console.log(diff);
+console.log(hilbert.convertCoordToIndex([3,-3]));
+console.log(hilbert.convertIndexToCoordinate(4));
+console.log(hilbert.convertCoordToIndex([-3,1]));
