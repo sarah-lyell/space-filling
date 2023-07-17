@@ -11,6 +11,17 @@
 </head>
 <body>
   <header>
+    Click on the following buttons to generate a table comparing different
+    curves of various orders based on the metric displayed. It may take a
+    second. 
+  </header>
+  <script type="module" src="./measurements.mjs"></script>
+  <button id="tableButton" style="display: block; margin-bottom: 10px; margin-top: 10px;">
+    Average Nearest Neighbor Stretch</button>
+  <button id="tableTwoButton" style="display: block; margin-bottom: 10px; margin-top:10px;">
+    Median Nearest Neighbor Stretch</button>
+  <script type="module" src="./tests.js"></script>
+  <header>
     Select a curve and input the desired order (iteration) below.
     Then click "Draw Curve" to generate your desired curve. Some sizes
     may be too large for the window to display, so they will only be partially
@@ -29,6 +40,5 @@
   <button id="drawButton">Draw Curve</button>
   <canvas id="canvas" width="1600" height="1600"></canvas>
   <script type="module" src="./space_filling_script.js"></script>
-  <script type="module" src="./measurements.mjs"></script>
 </body>
 </html>

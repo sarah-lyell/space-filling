@@ -28,8 +28,17 @@ export class HilbertRules extends GeneralInstructionString{
      * for this Hilbert ordering. 
      */
     convertCoordToIndex(coord) {
+        // store coord since it is modified by recursive function
+        let [x, y] = [...coord];
+
         const order = this.order;
-        return this.convertCoordToIndexRecursive(coord, order);
+        const index = this.convertCoordToIndexRecursive(coord, order);
+        
+        //restore coord before returning
+        coord[0] = x;
+        coord[1] = y;
+
+        return index;
     }
 
     convertCoordToIndexRecursive(coord, order) {
@@ -48,7 +57,7 @@ export class HilbertRules extends GeneralInstructionString{
         } else if (x > 0 && y < 0) {
             quadrant = 3;
         }
-        console.log(quadrant);
+        //console.log(quadrant);
         if (order == 1) {
             return quadrant;
         } else {
@@ -61,8 +70,8 @@ export class HilbertRules extends GeneralInstructionString{
                     coord[0] = -y;
                     coord[1] = x; 
                     prevIndex = this.convertCoordToIndexRecursive(coord, order - 1);
-                    console.log(coord);
-                    console.log(prevIndex);
+                    //console.log(coord);
+                    //console.log(prevIndex);
                     return prevIndex;
                 case 1: // Upper left quadrant
                     x += shift;
@@ -70,28 +79,28 @@ export class HilbertRules extends GeneralInstructionString{
                     coord[0] = x; // no rotation
                     coord[1] = y;
                     prevIndex = this.convertCoordToIndexRecursive(coord, order - 1);
-                    console.log(coord);
-                    console.log(prevIndex);
+                    //console.log(coord);
+                    //console.log(prevIndex);
                     return prevIndex + Math.pow(4, (order - 1));
                 case 2: // Upper right quadrant
                     x -= shift;
                     y -= shift;
                     coord[0] = x;
                     coord[1] = y;
-                    console.log(coord);
+                    //console.log(coord);
                     prevIndex = this.convertCoordToIndexRecursive(coord, order - 1);
-                    console.log(prevIndex);
+                    //console.log(prevIndex);
                     return prevIndex + (2 * Math.pow(4, (order - 1)));
                 case 3: // Lower right quadrant
                     x -= shift;
                     y += shift;
-                    console.log(x, y);
+                    //console.log(x, y);
                     y = -y; // reflect over x axis
                     coord[0] = y; // 90deg clockwise rotation
                     coord[1] = -x;
                     prevIndex = this.convertCoordToIndexRecursive(coord, order - 1);
-                    console.log(coord);
-                    console.log(prevIndex);
+                    //console.log(coord);
+                    //console.log(prevIndex);
                     return prevIndex + (3 * Math.pow(4, (order - 1)));
             }
             

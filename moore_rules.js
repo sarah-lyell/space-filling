@@ -25,4 +25,8 @@ export class MooreRules extends GeneralInstructionString {
         return this._curveType;
     }
 
+    convertCoordinateToIndex(coord) {
+        const order = this.order;
+    }
+
 }
