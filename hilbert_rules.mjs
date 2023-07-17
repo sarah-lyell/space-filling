@@ -22,7 +22,7 @@ export class HilbertRules extends GeneralInstructionString{
         return this._curveType;
     }
 
-    /*  **this is not working as expected**
+    /*  
      * This method converts a coordinate pair to its associated index
      * in a Hilbert ordering. Assumes that coord is a valid coordinate 
      * for this Hilbert ordering. 
@@ -38,7 +38,7 @@ export class HilbertRules extends GeneralInstructionString{
         coord[0] = x;
         coord[1] = y;
 
-        return index;
+        return index; 
     }
 
     convertCoordToIndexRecursive(coord, order) {

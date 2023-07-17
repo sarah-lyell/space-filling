@@ -5,6 +5,7 @@
  */
 import { MortonOrder } from "./morton_rule.js";
 import { HilbertRules } from "./hilbert_rules.mjs";
+import { MooreRules } from "./moore_rules.js";
 export class Measurements {
 
     constructor(curveType, order) {
@@ -28,6 +29,8 @@ export class Measurements {
                 return this.calcAvgHilbertNeighborStretch();
             case 'morton':
                 return this.calculateAverageNeighborStretch();
+            case 'moore':
+                return this.calcAvgMooreNeighborStretch();
         }
     }
 
@@ -42,6 +45,8 @@ export class Measurements {
                 return this.calculateMedianHilbertNeighborStretch();
             case 'morton':
                 return this.calculateMedianNeighborStretch();
+            case 'moore':
+                return this.calculateMedianMooreNeighborStretch();
         }
     }
 
@@ -326,6 +331,54 @@ export class Measurements {
         return average;
     }
 
+    calculateMooreNeighborStretches(coord, neighbors) {
+        const order = this.order;
+        const stretches = [];
+        const moore = new MooreRules(order);
+        const coordIndex = moore.convertCoordinateToIndex(coord);
+        for (let neighbor of neighbors) {
+            const thisIndex = moore.convertCoordinateToIndex(neighbor);
+            const distance = Math.abs(thisIndex - coordIndex);
+            stretches.push(distance);
+        }
+        return stretches;
+    }
+
+    calcAvgMooreNeighborStretch() {
+        // Hilbert and Moore use same ordering scheme, and the grid neighbors
+        // do not change
+        let mapOfNeighbors = this.mapOfHilbertNeighbors();
+        const averageStretches = [];
+
+        // Get average nearest neighbor stretch for each individual point
+        for (const key of mapOfNeighbors.keys()) {
+            const stretches = 
+              this.calculateMooreNeighborStretches(key, mapOfNeighbors.get(key));
+            const avgStretch = this.calculateAverage(stretches);
+            averageStretches.push(avgStretch);      
+        }
+        const average = this.calculateAverage(averageStretches);
+        return average;
+
+    }
+
+    calculateMedianMooreNeighborStretch() {
+        let mapOfNeighbors = this.mapOfHilbertNeighbors();
+        const medianStretches = [];
+            
+        // Get median nearest neighbor stretch for each individual point
+        for (const key of mapOfNeighbors.keys()) {
+            const stretches = 
+                this.calculateMooreNeighborStretches(key, mapOfNeighbors.get(key));
+            const medStretch = this.calculateMedian(stretches);
+            medianStretches.push(medStretch);      
+        }
+    
+        const medianStretch = this.calculateMedian(medianStretches);
+        return medianStretch;
+    }
+
+ 
     /*
      * Calculate and return median nearest neighbor stretch for Hilbert
      * curves. Calculates the median nearest neightbor stretch of each grid

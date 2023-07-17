@@ -31,13 +31,14 @@ export class Table {
         // Get the test results
         let hilbertANNSResults = this.hilbertANNSTests();
         let mortonANNSResults = this.mortonANNSTests();
+        let mooreANNSResults = this.mooreANNSTests();
         
         // Create a <table> element and a <tbody> element
         const tbl = document.createElement("table");
         const tblBody = document.createElement("tbody");
 
         // Creating the cells (10 rows for now)
-        for (let r = 0; r < 3; r++) {
+        for (let r = 0; r < 4; r++) {
             // First row contains titles
             if (r == 0) {
                 const row = document.createElement("tr");
@@ -70,6 +71,11 @@ export class Table {
                         const cellText = document.createTextNode("Morton");
                         cell.appendChild(cellText);
                         row.appendChild(cell);
+                    
+                    } else if (c == 0 && r == 3) {
+                        const cellText = document.createTextNode("Moore")
+                        cell.appendChild(cellText);
+                        row.appendChild(cell);
                     } else if (r == 1) {
                         let result = hilbertANNSResults[c - 1];
                         
@@ -85,6 +91,16 @@ export class Table {
                         let result = mortonANNSResults[c - 1];
                         // Limit precision to 2 decimal places
                         result = parseFloat(result).toFixed(2);
+                        const cellText = document.createTextNode(result);
+                        cell.appendChild(cellText);
+                        row.appendChild(cell);
+                    } else if (r == 3) {
+                        let result = mooreANNSResults[c - 1];
+                        // Don't parse order 10 since undefined
+                        if (c != 9) {
+                            // Limit precision to 2 decimal places
+                            result = parseFloat(result).toFixed(2); 
+                        }
                         const cellText = document.createTextNode(result);
                         cell.appendChild(cellText);
                         row.appendChild(cell);
@@ -111,13 +127,14 @@ export class Table {
         // Get the test results
         let hilbertMNNSResults = this.hilbertMNNSTests();
         let mortonMNNSResults = this.mortonMNNSTests();
-        
+        let mooreMNNSResults = this.mooreMNNSTests();
+
         // Create a <table> element and a <tbody> element
         const tbl = document.createElement("table");
         const tblBody = document.createElement("tbody");
 
         // Creating the cells (10 rows for now)
-        for (let r = 0; r < 3; r++) {
+        for (let r = 0; r < 4; r++) {
             // First row contains titles
             if (r == 0) {
                 const row = document.createElement("tr");
@@ -149,6 +166,10 @@ export class Table {
                         const cellText = document.createTextNode("Morton");
                         cell.appendChild(cellText);
                         row.appendChild(cell);
+                    } else if (c == 0 && r == 3) {
+                        const cellText = document.createTextNode("Moore");
+                        cell.appendChild(cellText);
+                        row.appendChild(cell);
                     } else if (r == 1) {
                         const result = hilbertMNNSResults[c - 1];
                         const cellText = document.createTextNode(result);
@@ -159,8 +180,13 @@ export class Table {
                         const cellText = document.createTextNode(result);
                         cell.appendChild(cellText);
                         row.appendChild(cell);
+                    } else if (r == 3) {
+                        const result = mooreMNNSResults[c - 1];
+                        const cellText = document.createTextNode(result);
+                        cell.appendChild(cellText);
+                        row.appendChild(cell);
                     }
-                }
+                } 
                 tblBody.appendChild(row);
             }
 
@@ -191,6 +217,32 @@ export class Table {
         //console.log(hilbertAvgNNS);
         return hilbertAvgNNS;
     }
+
+    /* average nearest neighbor stretch for orders 2-10 of Moore curve.
+     * Returns an array of the result of the average nearest neighbor 
+     * stretches for the given orders 
+     */
+    mooreANNSTests() {
+        let mooreAvgNNS = [];
+        for (let i = 2; i <= 9; i++) {
+            const moore = new Measurements('moore', i);
+            mooreAvgNNS.push(moore.avgNearestNeighborStretch);
+        }
+        //console.log(hilbertAvgNNS);
+        return mooreAvgNNS;
+    }
+
+    mooreMNNSTests() {
+        let mooreMedNNS = [];
+        for (let i = 2; i <= 9; i++) {
+            const moore = new Measurements('moore', i);
+            mooreMedNNS.push(moore.medNearestNeighborStretch);
+        }
+        //console.log(hilbertAvgNNS);
+        return mooreMedNNS;
+    }
+
+
 
     /* 
      * median nearest neighbor stretch for orders 2-10 of hilbert
