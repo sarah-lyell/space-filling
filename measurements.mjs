@@ -5,12 +5,14 @@
  */
 import { MortonOrder } from "./morton_rule.js";
 import { HilbertRules } from "./hilbert_rules.mjs";
-class Mesaurements {
+export class Measurements {
 
-    constructor(sideLength, order) {
+    constructor(curveType, order) {
+        this.curveType = curveType;
         this.order = order;
-        this.maxCoordVal = sideLength - 1;
-        //this.curve = curve;
+        this.sideLength = (2 ** order);
+        this.maxCoordVal = this.sideLength - 1;
+        this.maxIndex = (this.sideLength ** 2) - 1;
     }
 
     /* 
@@ -98,6 +100,7 @@ class Mesaurements {
             let neighbors = this.findChebyshevNeighbors(coord);
             mapOfNeighbors.set(coord, neighbors);
         }
+        console.log(mapOfNeighbors);
         return mapOfNeighbors;
     }
 
@@ -124,11 +127,125 @@ class Mesaurements {
         return average;
     }
 
+    /* Separate function because I used an idiosyncratic coordinate
+     * labeling scheme to make computations easier */
+    generateHilbertCoordinates() {
+        const coordinates = [];
+        const hilbert = new HilbertRules(this.order);
+        for (let i = 0; i <= this.maxIndex; i++) {
+            let coord = hilbert.convertIndexToCoordinate(i);
+            coordinates.push(coord);
+        }
+        return coordinates;
+    }
+
+    findHilbertChebNeighbors(coord) {
+        let x = coord[0];
+        let y = coord[1];
+        let chebNeighbors = [];
+        
+        // coordinates corresponding to edge of grid using hilbert scheme
+        const minHilb = -(this.sideLength);
+        const maxHilb = this.sideLength; 
+        
+        // Add valid neighobors 
+        if (x > minHilb && x < maxHilb && y > minHilb && y < maxHilb) {
+            // Non edge cells, all possible neighbors are valid 
+            chebNeighbors.push([x - 2, y - 2]);
+            chebNeighbors.push([x - 2, y]);
+            chebNeighbors.push([x, y - 2]);
+            chebNeighbors.push([x + 2, y - 2]);
+            chebNeighbors.push([x + 2, y]);
+            chebNeighbors.push([x - 2, y + 2]);
+            chebNeighbors.push([x, y + 2]);
+            chebNeighbors.push([x + 2, y + 2]);
+
+        } else {
+            // Check cases individually
+            if (x > minHilb && y > minHilb) {
+                chebNeighbors.push([x - 1, y - 1]);
+            }
+            if (x > minHilb) {
+                chebNeighbors.push([x - 1, y]);
+            }
+            if (y > minHilb) {
+                chebNeighbors.push([x, y - 1]);
+            }
+            if (x < maxHilb && y  > minHilb) {
+                chebNeighbors.push([x + 1, y - 1]);
+            }
+            if (x < maxHilb) {
+                chebNeighbors.push([x + 1, y]);
+            }
+            if (x > minHilb && y < maxHilb) {
+                chebNeighbors.push([x - 1, y + 1]);
+            }
+            if (y < maxHilb) {
+                chebNeighbors.push([x, y + 1]);
+            }
+            if (x < maxHilb && y < maxHilb){
+                chebNeighbors.push([x + 1, y + 1]);
+            }
+        }
+        
+        return chebNeighbors;
+    }
+
+     /*
+      * Return a map of every point and all of its neighbors in
+      * Hilbert scheme
+      */
+     mapOfHilbertNeighbors() {
+        const mapOfNeighbors = new Map();
+        const coordinates = this.generateHilbertCoordinates();
+        for (let coord of coordinates) {
+            let neighbors = this.findHilbertChebNeighbors(coord);
+            mapOfNeighbors.set(coord, neighbors);
+        }
+        console.log(mapOfNeighbors)
+        return mapOfNeighbors;
+    }
+ 
+    /* 
+     * Calculate the average nearest neighbor stretch for a coordinate
+     * given a list of its neighbors in the hilbert coordinate scheme 
+     */
+    calculateHilbertNeighborStretch(coord, neighbors) {
+        const distances = [];
+        const hilbert = new HilbertRules(this.order);
+        const coordIndex = hilbert.convertCoordToIndex(coord);
+        
+        for (let neighbor of neighbors) {
+            const thisIndex = hilbert.convertCoordToIndex(neighbor);
+            const distance = Math.abs(thisIndex - coordIndex);
+            distances.push(distance);
+        }
+        console.log(distances);
+        const sum = distances.reduce((acc, val) => acc + val, 0);
+        console.log(sum);
+        const average = sum / distances.length;
+        console.log(average);
+        return average;
+    }
+
+
     /*
      * Calculate and return average nearest neighbor stretch
      */
     calculateAverageNeighborStretch() {
-        const mapOfNeighbors = this.mapOfNeighbors();
+        const curveType = this.curveType;
+        let mapOfNeighbors;
+        switch (curveType) {
+            case 'hilbert':
+                mapOfNeighbors = this.mapOfHilbertNeighbors();
+                console.log("Made it to hilbert");
+                break;
+            case 'morton':
+                mapOfNeighbors = this.mapOfNeighbors();
+                console.log("Made it to morton");
+                break;
+        }
+
         const averageStretches = [];
         
         // Get average nearest neighbor stretch for each individual point
@@ -151,7 +268,7 @@ class Mesaurements {
 //console.log(coordinates);
 //const avg = measure.avgNearestNeighborStretch;
 //console.log(avg);
-
+/*
 const hilbert = new HilbertRules(3);
 const index = hilbert.convertIndexToCoordinate(12);
 console.log(index);
@@ -162,3 +279,9 @@ console.log(diff);
 console.log(hilbert.convertCoordToIndex([3,-3]));
 console.log(hilbert.convertIndexToCoordinate(4));
 console.log(hilbert.convertCoordToIndex([-3,1]));
+const measure = new Mesaurements('hilbert', 2)
+const coordinates = measure.generateHilbertCoordinates();
+console.log(coordinates);
+const avg = measure.avgNearestNeighborStretch;
+console.log(avg);
+*/
